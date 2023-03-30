@@ -421,7 +421,7 @@ $pdf->Cell(10);
 $pdf->MultiCell(0,5,utf8_decode("No hay garantías de que la tele consulta eliminará la necesidad de que consulte a un especialista de manera presencial."),0,'J');
 
 $pdf->Ln(3);
-$pdf->MultiCell(0,5,utf8_decode("Autorizo además a que la consulta médica sea grabada (en video y audio) para efectos de seguridad de las dos partes."),0,'J');
+$pdf->MultiCell(0,5,utf8_decode("Autorizo además a que la consulta médica por telmedicina sea grabada (en video y audio) para efectos de seguridad de las dos partes."),0,'J');
 
 $pdf->AddPage();
 $pdf->SetFont('Arial','B',10);

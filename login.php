@@ -87,7 +87,7 @@ $totalRows_rscustom = mysql_num_rows($rscustom);
                                             </span>
                                         </div>
                                         <div class="text-center mb-4">
-                                            <h4 class="text-uppercase mt-0">SISTEMA DE AGENDAMIENTO ONLINE</h4>
+                                            <h4 class="text-uppercase mt-0">AGENDAMIENTO DE CITAS</h4>
                                         </div>
                                         <form method="post" id="form1" class="KT_tngformerror" action="<?php echo KT_escapeAttribute(KT_getFullUri()); ?>">
                                             <div class="form-group mb-3">

@@ -31,12 +31,12 @@
                     <div class="collapse" id="reservaciones">
                         <ul class="nav-second-level">
                             <li><a href="/booking/index.php">Nueva Reserva</a></li>
-                            <li><a href="/laboratorio/quimica/index.php">Mis Reservas</a></li>                       
+                            <li><a href="/booking/list.php">Mis Reservas</a></li>                       
                         </ul>
                     </div>
                 </li>
                 <li>
-                    <a href="/pacientes/index.php">
+                    <a href="/pago/index.php">
                         <i class="mdi mdi-account-search"></i>
                         <span> Gestión de Pago </span>
                     </a>

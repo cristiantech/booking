@@ -4,6 +4,7 @@ require_once 'config.php';
 function create_meeting() {
     $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
     $db = new DB();
+    $db2 = new DB2();
     $arr_token = $db->get_access_token();
     $accessToken = $arr_token->access_token;
     
@@ -25,6 +26,12 @@ function create_meeting() {
         echo "Join URL: ". $data->join_url;
         echo "<br>";
         echo "Meeting Password: ". $data->password;
+        
+        $username = 1234;
+        
+        //Ingreso de Reunión en Base de Datos
+        $db2->insertMeeting($username, $data->join_url);
+        
     } catch(Exception $e) {
         if( 401 == $e->getCode()) {
             $refresh_token = $db->get_refresh_token();

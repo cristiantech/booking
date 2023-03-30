@@ -55,44 +55,6 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 }
 
-$editFormAction = $_SERVER['PHP_SELF'];
-if (isset($_SERVER['QUERY_STRING'])) {
-  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $id = $_POST['id'];
-    
-    if ((isset($_POST["MM_insert_$id"])) && ($_POST["MM_insert_$id"] == "form$id")) {
-    
-        $insertSQL = sprintf("INSERT INTO reservas (username, servicio, localidad, costo) VALUES (%s, %s, %s, %s)",
-                             GetSQLValueString($_SESSION['kt_login_user'], "text"),
-                             GetSQLValueString($id, "int"),
-                             GetSQLValueString($_POST["ciudad$id"], "int"),
-                             GetSQLValueString($_POST["costo$id"], "int"));
-    
-        mysql_select_db($database_booking, $booking);
-        $Result1 = mysql_query($insertSQL, $booking) or die(mysql_error());
-    
-        //$insertGoTo = 'list.php';
-        
-        $insertGoTo = "../js/index3.php?servicio=$id";    
-        
-        if (isset($_SERVER['QUERY_STRING'])) {
-            //$insertGoTo .= (strpos($insertGoTo, '?')) ? "&" : "?";
-            //$insertGoTo .= $_SERVER['QUERY_STRING'];
-        }
-        header(sprintf("Location: %s", $insertGoTo));
-    }
-}
-
-function obtenerEdad($fecha_nacimiento){
-        $nacimiento = new DateTime($fecha_nacimiento);
-        $ahora = new DateTime(date("Y-m-d"));
-        $diferencia = $ahora->diff($nacimiento);
-        return $diferencia->y;
-}
-
 $colname_login = "-1";
 if (isset($_SESSION['kt_login_user'])) {
   $colname_login = $_SESSION['kt_login_user'];
@@ -103,14 +65,12 @@ $login = mysql_query($query_login, $booking) or die(mysql_error());
 $row_login = mysql_fetch_assoc($login);
 $totalRows_login = mysql_num_rows($login);
 
-$sexo = $row_login['sexo'];
-
-//Listado de Servicios
+//Mis Reservas
 mysql_select_db($database_booking, $booking);
-$query_servicios = "SELECT * FROM servicios WHERE activo = '1' ORDER BY nombre";
-$servicios = mysql_query($query_servicios, $booking) or die(mysql_error());
-$row_servicios = mysql_fetch_assoc($servicios);
-$totalRows_servicios = mysql_num_rows($servicios);
+$query_reservas = sprintf("SELECT reservas.*, servicios.nombre as 'nombre' FROM reservas INNER JOIN servicios ON reservas.servicio = servicios.id WHERE pagado is NULL AND username = %s", GetSQLValueString($colname_login, "text"));
+$reservas = mysql_query($query_reservas, $booking) or die(mysql_error());
+$row_reservas = mysql_fetch_assoc($reservas);
+$totalRows_reservas = mysql_num_rows($reservas);
 
 // Make a logout transaction instance
 $logoutTransaction = new tNG_logoutTransaction($conn_booking);
@@ -173,52 +133,35 @@ $totalRows_rscustom = mysql_num_rows($rscustom);
                     <!-- Start Content-->
                     <div class="container-fluid">
                         <div class="row">
-                            <? do { ?> 
-                            <div class="col-md-6 col-xl-3">
-                                <!-- Simple card -->
-                                <form action="" id="form<? echo $row_servicios['id']; ?>" name="form" data-parsley-validate novalidate method="post">
-                                    <div class="card">
+                            <div class="col-md-6 col-xl-6">
+                                <div class="card">
                                         <img class="card-img-top img-fluid" src="../assets/images/gallery/1.jpg" alt="Card image cap">
                                         <div class="card-body">
-                                            <h4 class="card-title"><? echo $row_servicios['nombre']; ?></h4>
-                                            <h5 class="text-danger"><? echo $row_servicios['tipo']; ?></h5>
-                                            <p class="card-text mb-1"><? echo $row_servicios['descripcion']; ?></p>
-                                            <label for="costo<? echo $row_servicios['id']; ?>" class="form-label mt-2">Costo:</label>
-                                            <output id="costo<? echo $row_servicios['id']; ?>" class="form-control"><? echo $row_servicios['costo']; ?></output>
-                                            <? if ($row_servicios['tipo']=='Presencial') { ?>
-                                            <label for="ciudad<? echo $row_servicios['id']; ?>" class="form-label mt-2">Ciudad de Atención:</label>
-                                            <? 
-                                                mysql_select_db($database_booking, $booking);
-                                                $query_offered = sprintf("SELECT localidades.id AS 'idCiudad', localidades.nombre AS 'ciudadNombre' FROM localidades INNER JOIN offered_services ON offered_services.id_localidades = localidades.id INNER JOIN servicios ON servicios.id =  offered_services.id_servicios WHERE servicios.id = %s AND offered_services.activo = 1", GetSQLValueString($row_servicios['id'], "int"));
-                                                $offered = mysql_query($query_offered, $booking) or die(mysql_error());
-                                                $row_offered = mysql_fetch_assoc($offered);
-                                                $totalRows_offered = mysql_num_rows($offered);
-                                            ?>
-                                            <select name="ciudad<? echo $row_servicios['id']; ?>" id="ciudad<? echo $row_servicios['id']; ?>" class="form-select" required>
-                                                <option value="" selected>Seleccione Ciudad:</option>
-                                                <?php
-                                                    do {  
-                                                ?>
-                                                <option value="<?php echo $row_offered['idCiudad']?>"><?php echo $row_offered['ciudadNombre']?></option>
-                                                <?php
-                                                    } while ($row_offered = mysql_fetch_assoc($offered));
-                                                    $rows = mysql_num_rows($offered);
-                                                    if($rows > 0) {
-                                                        mysql_data_seek($offered, 0);
-                                                        $row_offered = mysql_fetch_assoc($offered);
-                                                    }
-                                                ?>
-                                            </select>
-                                            <? } ?>
-                                            <input type="hidden" name="id" value="<? echo $row_servicios['id'];  ?>">
-                                            <input type="hidden" name="costo<? echo $row_servicios['id']; ?>" value="<? echo $row_servicios['costo']; ?>">
-                                            <input type="hidden" name="MM_insert_<? echo $row_servicios['id']; ?>" value="form<? echo $row_servicios['id']; ?>">
-                                            <button type="submit" class="btn btn-primary mt-2">Reservar</button>
-                                        </div>
+                                            <h4 class="card-title"><? //echo $row_servicios['nombre']; ?></h4>
+                                            <h5 class="text-danger"><? //echo $row_servicios['tipo']; ?></h5>
+                                            <table class="table table-responsive">
+                                                <thead align="center">
+                                                    <tr>
+                                                        <th>Servicio</th>
+                                                        <th>Costo</th>
+                                                        <th>Comprobante</th>
+                                                        <th>Agendar Cita</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody align="center">
+                                                    <? do { ?>
+                                                    <tr>
+                                                        <td><? echo $row_reservas['nombre']; ?></td>
+                                                        <td><? echo $row_reservas['costo']; ?></td>
+                                                        <td><input type="file"></td>
+                                                        <td>Link</td>
+                                                    </tr>
+                                                    <? } while ($row_reservas = mysql_fetch_assoc($reservas)) ?>
+                                                </tbody> 
+                                            </table>
                                     </div>
-                                </form>
-                            </div><!-- end col -->   
-                            <? } while ($row_servicios = mysql_fetch_assoc($servicios)); ?>
+                                </div>
+                            </div>                            
                         </div>                  
                     </div> <!-- container -->
                 </div> <!-- content -->

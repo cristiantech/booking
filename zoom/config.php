@@ -1,6 +1,7 @@
 <?php
 require_once 'vendor/autoload.php';
 require_once "class-db.php";
+require_once "class-db2.php";
 
 define('CLIENT_ID', 'GpHt5NvmR8aTssSPkpH6g');
 define('CLIENT_SECRET', 'EIv4ACXb0lPcvJtcHOha7TpfeQ6SkbJ6');

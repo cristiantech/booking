@@ -341,7 +341,7 @@ $fullname = $row_login['fullname'];
 $documento = $row_login['username'];
 $telefono = $row_login['telefono'];
 
-$fecha = date(strtotime(now));
+$fecha = date(strtotime('now'));
 setlocale(LC_TIME, 'es_ES');
 $fecha = strftime("%A, %d de %B del %Y", $fecha);
 
@@ -421,27 +421,16 @@ $pdf->Cell(10);
 $pdf->MultiCell(0,5,utf8_decode("No hay garantías de que la tele consulta eliminará la necesidad de que consulte a un especialista de manera presencial."),0,'J');
 
 $pdf->Ln(3);
-$pdf->MultiCell(0,5,utf8_decode("Autorizo además a que la consulta médica sea grabada (en video y audio) para efectos de seguridad de las dos partes."),0,'J');
+$pdf->MultiCell(0,5,utf8_decode("Autorizo además a que la consulta médica por telemedicina sea grabada (en video y audio) para efectos de seguridad de las dos partes."),0,'J');
 
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',10);
-$pdf->MultiCell(0,5,utf8_decode("Costos de la atención"),0,'J');
-$pdf->SetFont('Arial','',10);
-$pdf->Cell(10);
-$pdf->MultiCell(0,5,utf8_decode("Estoy de acuerdo con aportar $10,00 (DIEZ,00/100 DOLARES AMERICANOS), que será cancelada o depositada antes de recibir la atención. Su contribución apoyará a financiar otras prestaciones a nuestras poblaciones que no tienen financiamiento. Si usted no está en la fecha y hora acordada deberá pagar nuevamente el valor de la cita."),0,'J');
-$pdf->Cell(10);
-$pdf->MultiCell(0,5,utf8_decode("Los costos de los exámenes médicos solicitados, serán pagados por el usuario y en caso de requerir alguna subvención, será previa la validación y autorización del médico."),0,'J');
-$pdf->Cell(10);
-$pdf->MultiCell(0,5,utf8_decode("La medicación para PrEP es gratuita ya que es entregada por el Ministerio de Salud Pública."),0,'J');
-$pdf->Cell(10);
-$pdf->MultiCell(0,5,utf8_decode("La medicación para nPEP y ARV serán cubiertas por el usuario."),0,'J');
-
-$pdf->Ln(3);
 $pdf->SetFont('Arial','B',10);
 $pdf->MultiCell(0,5,utf8_decode("Otras consideraciones:"),0,'J');
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(10);
-$pdf->MultiCell(0,5,utf8_decode("Usted puede elegir o rechazar el tratamiento PrEP, nPEP, ARV, ITS, en cualquier momento que decida y puede ser parcial o completo."),0,'J'); 
+$pdf->MultiCell(0,5,utf8_decode("Estoy de acuerdo con aportar $10,00 (DIEZ,00/100 DOLARES AMERICANOS), su contribución apoyará a financiar otras prestaciones a nuestras poblaciones que no tienen financiamiento."),0,'J');
+$pdf->Cell(10);
+$pdf->MultiCell(0,5,utf8_decode("Si usted no está en la fecha y hora acordada deberá pagar nuevamente el valor de la cita."),0,'J');
 $pdf->Cell(10);
 $pdf->MultiCell(0,5,utf8_decode("Usted dispone de 72 horas laborables para el retiro de la medicación que haya sido recetada por el médico, pasado este tiempo usted tendrá que volver a realizar el procedimiento de la telemedicina y los exámenes correspondientes."),0,'J');
 
@@ -484,7 +473,7 @@ $err = 'M';
 //$pdf->Image("http://laboratorio.kimirina.org/laboratorio/pdf/qr/image.php?msg=$colname_SpecimenID", 15, $valorY+10, 20, 20, "png");
 //$qrcode->displayFPDF('test.pdf',0,0,0);
     
-$pdf_file = $colname_SpecimenID.'_'.$colname_fecha;
+$pdf_file = $documento.'_'.$fecha;
 //
 $pdf->Output("$pdf_file.pdf","I");
 //$pdf->Output("../resultados/$pdf_file.pdf","F");

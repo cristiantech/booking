@@ -51,11 +51,12 @@ if (isset($_SERVER['QUERY_STRING'])) {
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form")) {
     
-    $insertSQL = sprintf("INSERT INTO users (fullname, username, birthday, genero, provincia, canton, telefono, email, password, level) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+    $insertSQL = sprintf("INSERT INTO users (fullname, username, birthday, genero, sexo, provincia, canton, telefono, email, password, level) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
 						 GetSQLValueString($_POST['fullname'], "text"),
 						 GetSQLValueString($_POST['docId'], "text"),
 						 GetSQLValueString($_POST['birthday'], "date"),
 						 GetSQLValueString($_POST['genero'], "int"),
+						 GetSQLValueString($_POST['sexoNacimiento'], "text"),
 						 GetSQLValueString($_POST['provincia'], "int"),
 						 GetSQLValueString($_POST['canton'], "int"),
 						 GetSQLValueString($_POST['telefono'], "text"),
@@ -256,7 +257,11 @@ $totalRows_provincias = mysql_num_rows($provincias);
                                             <div class="col-lg-6">
                                                 <div class="mb-3">
                                                     <label for="sexoNacimiento" class="form-label">Sexo al Nacimiento</label>
-                                                    <select name="sexoNacimiento" id="sexoNacimiento" class="form-select" required></select>
+                                                    <select name="sexoNacimiento" id="sexoNacimiento" class="form-select" required>
+                                                        <option value="">Seleccionar Sexo</option>
+                                                        <option value="H">Hombre</option>
+                                                        <option value="M">Mujer</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

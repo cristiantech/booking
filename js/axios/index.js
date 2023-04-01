@@ -3,52 +3,72 @@ const data = { "company": "corporacionkimirina", "login": "aalava@kimirina.org",
 const APIurl = "https://user-api-v2.simplybook.me";
 
 const options = {
-    method: "POST", // or 'PUT'
+    method: "POST",
     headers: {
-      "Content-Type": "application/json",
+        "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
 }
 
 const token = null;
+const refreshToken = null;
 
-const getAccessToken = async () => { 
+const conexion = async () => {
     const response = await fetch(`${APIurl}/admin/auth/`, options);
-    const conexion = await response.json();
-
-    //console.log(conexion);
-
-    this.token = conexion.token;
-
-    let requestOptions = {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Company-Login': 'corporacionkimirina',
-            'X-Token': conexion.token,            
-        }
+    
+    if (!response.ok){
+        console.log('reintentando');
+        setTimeout(conexion, 10000);
+        //conexion();
     }
-
-    getServicesList(requestOptions);    
-
+    else {
+        const conexion = await response.json();
+        
+        this.token = conexion.token;
+        this.refreshToken = conexion.refresh_token;
+        
+        let requestOptions = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Company-Login': 'corporacionkimirina',
+                'X-Token': conexion.token,            
+            }
+        }
+        getServicesList(requestOptions);
+    }
 }
 
-getAccessToken();
+conexion();
 
 const getServicesList = async (requestOptions) => {
     const response = await fetch(`${APIurl}/admin/services/`, requestOptions);
-    const servicios = await response.json();
-    //console.log(servicios);
-    
-    //var result = Object.keys(servicios).map((key) => [Number(key), servicios[key]]);
+    if (!response.ok){
+        //console.log('crear una accion de error');
+        //logout(requestOptions);
+        console.log(response.status);
+    }
+    else { 
+        const servicios = await response.json();
+        //console.log(servicios);
 
-    //var result = Object.entries(servicios);
-    
-    console.log(servicios);
+        servicios.data.map((i) => {
+            console.log(i.name);         
+        })
+    logout(this.token);
+    }
+}
 
-    var result = Object.entries(servicios);
-
-    result.map((i) => {
-        console.log(i);
-    })
+const logout = async (token) => {
+    const response = await fetch(`${APIurl}/admin/auth/logout`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            'X-Company-Login': 'corporacionkimirina',
+            'X-Token': token,  
+        },
+        body: JSON.stringify({"auth_token": token})
+    });
+    //const logout = await response.json()
+    console.log(response.status);
 }

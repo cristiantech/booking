@@ -13,6 +13,7 @@ jQuery(document).ready(function () {
     var Scheduler = function (options) {
         this.init(options);
     }
+
     jQuery.extend(Scheduler.prototype, {
     	options: {
             'api_url': 'https://user-api.simplybook.me',
@@ -25,7 +26,7 @@ jQuery(document).ready(function () {
         events: {},
         units: {},
         attachedUnits: [],
-        
+
         eventId: null,
         unitId: null,
         qty: 1,
@@ -40,7 +41,13 @@ jQuery(document).ready(function () {
         
         batchId: null,
         
+        unitMap: [],
+
         additionalFields: [],
+
+        servicioMedico: "Proctologia",
+
+        myServicioMedicoId: null,
 
         init: function (options) {
             this.options = jQuery.extend({}, this.options, options);
@@ -87,6 +94,8 @@ jQuery(document).ready(function () {
         		    }
         		}
             });
+
+            /*
             this.client.getEventList(function (events) {
                 instance.events = events;
                 for (var id in events) {
@@ -101,6 +110,27 @@ jQuery(document).ready(function () {
                     }
                 }
             });
+            */           
+
+            instance.events = this.client.getEventList('','','', this.servicioMedico);
+
+            for (var id in instance.events) {
+                var event = instance.events[id];
+                
+                myServicioMedicoId = event.id;
+
+                jQuery('#event_id').append(
+                    jQuery('<option value="' + event.id + '" selected>' + event.name + '</option>')
+                );
+                
+                if (event.unit_map) {
+                    for (var unitId in event.unit_map) {
+                        instance.attachedUnits.push(unitId);
+                        this.unitMap.push(unitId);
+                    }
+                }
+            }           
+
             this.client.getAnyUnitData(function (data) {
             	instance.anyUnitData = data;
             	instance.client.getUnitList(function (units) {
@@ -182,21 +212,40 @@ jQuery(document).ready(function () {
         },
         
         setUnitList: function (units) {
+
+            let performers = this.client.getUnitList();
+
             var oldVal = jQuery('#unit_id').val();
-            
             jQuery('#unit_id option[value]').remove();
+
             if (this.anyUnitData) {
             	jQuery('#unit_id').append(
             		// -1 means any unit only for JS. We don't send it to server.
                     jQuery('<option value="-1">' + this.anyUnitData.name + '</option>')
                 );
             }
+
+            /*
             for (var id in units) {
                 var unit = units[id];
                 jQuery('#unit_id').append(
                     jQuery('<option value="' + unit.id + '">' + unit.name + '</option>')
                 );
+            }*/
+
+            for (var id in performers) {
+                const element = performers[id];	
+                for (let index = 0; index < this.unitMap.length; index++) {
+                    if (this.unitMap[index] == element.id){
+                        //jQuery('#doctores').append('<option value="' + element.id + '">' + element.name + '</option>');
+                        //console.log(doctores.name);
+                        jQuery('#unit_id').append(
+                            jQuery('<option value="' + element.id + '">' + element.name + '</option>')
+                        );
+                    }		
+                }
             }
+
             if (units[oldVal]) {
             	jQuery('#unit_id').val(oldVal);
             } else {
@@ -546,5 +595,10 @@ jQuery(document).ready(function () {
     });
 
     var scheduler = new Scheduler();
+
+    jQuery("#event_id").val(myServicioMedicoId).change();
+
+    //console.log(myServicioMedicoId);
     
 });
+

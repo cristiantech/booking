@@ -17,10 +17,16 @@ var client = new JSONRpcClient({
 	}
 });
 
-let services = client.getEventList('','','','Proctología');
+let services = client.getEventList('','','','Ginecologia');
 let performers = client.getUnitList();
 let unitMap = [];
 let firstWorkingDay;
+const newArray = Object.entries(services);
+newArray.forEach(gn => {
+	console.log(gn[1].unit_map);
+})
+
+
 
 // fetch service and performers selects here
 var serviceId;
@@ -42,6 +48,8 @@ for (var id in services) {
 		}
 	}
 }
+
+
 
 for (var id in performers) {
 	const element = performers[id];	

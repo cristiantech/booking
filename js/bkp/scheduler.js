@@ -87,6 +87,7 @@ jQuery(document).ready(function () {
         		    }
         		}
             });
+            
             this.client.getEventList(function (events) {
                 instance.events = events;
                 for (var id in events) {

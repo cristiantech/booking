@@ -14,8 +14,30 @@ const token = null;
 const refreshToken = null;
 
 const conexion = async () => {
-    const response = await fetch(`${APIurl}/admin/auth/`, options);
+    try {
+        const response = await fetch(`${APIurl}/admin/auth/`, options);
+        const conn = await response.json();
+        // this.token = conexion.token;
+        // this.refreshToken = conexion.refresh_token;
+        //console.log(conn)
+        return conn.token
+        
+        // let requestOptions = {
+        //     method: "GET",
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'X-Company-Login': 'corporacionkimirina',
+        //         'X-Token': conexion.token,            
+        //     }
+        // }
+        // getServicesList(requestOptions);
+        //conexion.close();
+        
+    } catch (error) {
+        console.log(error)
+    }
     
+    /*
     if (!response.ok){
         console.log('reintentando');
         setTimeout(conexion, 10000);
@@ -35,13 +57,23 @@ const conexion = async () => {
                 'X-Token': conexion.token,            
             }
         }
-        getServicesList(requestOptions);
-    }
+        
+    }*/
+    
 }
 
-conexion();
-
-const getServicesList = async (requestOptions) => {
+const getServicesList = async () => {
+    const toke = await conexion()
+    console.log(toke)
+    
+    let requestOptions = {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Company-Login': 'corporacionkimirina',
+            'X-Token': toke,            
+        }
+    }
     const response = await fetch(`${APIurl}/admin/services/`, requestOptions);
     if (!response.ok){
         //console.log('crear una accion de error');
@@ -55,7 +87,7 @@ const getServicesList = async (requestOptions) => {
         servicios.data.map((i) => {
             console.log(i.name);         
         })
-    logout(this.token);
+        logout(toke);
     }
 }
 
@@ -72,3 +104,5 @@ const logout = async (token) => {
     //const logout = await response.json()
     console.log(response.status);
 }
+
+getServicesList();
